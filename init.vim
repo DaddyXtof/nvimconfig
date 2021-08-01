@@ -52,10 +52,7 @@ Plug 'deoplete-plugins/deoplete-jedi'		" Python deoplete plugin
 Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
-
 " ================ Plugins Specific ==============================================
-lua require'lspconfig'.gdscript.setup{ }
-
 " NERDTree stuff
 let NERDTreeQuitOnOpen = 1
 let NERDTreeDirArrows = 0 
