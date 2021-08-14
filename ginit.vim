@@ -1,4 +1,4 @@
-GuiFont! Fira Code:h12
+GuiFont! FiraCode NF:h18
 " Full screen toggler mapped to F11
 map <F11> :call MaximizeToggle()<CR>
 let s:ismaximised = 0
@@ -10,7 +10,7 @@ endfunction
 let s:fontsize = 12
 function! AdjustFontSize(amount)
   let s:fontsize = s:fontsize+a:amount
-  :execute "GuiFont! Fira Mono:h" . s:fontsize
+  :execute "GuiFont! FiraCode NF:h" . s:fontsize
 endfunction
 
 noremap <C-ScrollWheelUp> :call AdjustFontSize(1)<CR>

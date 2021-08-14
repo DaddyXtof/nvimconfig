@@ -1,5 +1,6 @@
 " ================ Sets and all that =========================================
 syntax on
+set path+=**
 set tabstop=4 softtabstop=4
 set shiftwidth=4
 set expandtab
@@ -33,11 +34,11 @@ set nofoldenable    " disable folding because why?...
 set noshowmode
 set linespace=0
 set clipboard=unnamedplus
+set cursorline
 
 " ================ Plugins ====================================================
 call plug#begin(stdpath('data') . '/plugged')
 " Telescope requirements
-Plug 'kristijanhusak/orgmode.nvim'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -45,10 +46,13 @@ Plug 'preservim/nerdtree'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'gruvbox-community/gruvbox'
-Plug 'neovim/nvim-lspconfig'				" Neovim Language Server
+Plug 'neovim/nvim-lspconfig'			" Neovim Language Server
 Plug 'Shougo/deoplete.nvim'
-Plug 'deoplete-plugins/deoplete-lsp'		" Deoplete required for hover and complete?
-Plug 'deoplete-plugins/deoplete-jedi'		" Python deoplete plugin
+Plug 'deoplete-plugins/deoplete-lsp'	" Deoplete required for hover & complete?
+Plug 'deoplete-plugins/deoplete-jedi'	" Python deoplete plugin
+Plug 'hrsh7th/nvim-compe'
+Plug 'kristijanhusak/orgmode.nvim'
+Plug 'projekt0n/github-nvim-theme'
 Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
@@ -61,18 +65,76 @@ let NERDTreeChDirMode=3
 " deoplete specific
 let g:deoplete#enable_at_startup = 1
 
+" OrgMode
+lua << EOF
+require('orgmode').setup({
+  org_agenda_files = {'~\\OneDrive\\orgmode\\**'},
+  org_default_notes_file = '~\\OneDrive\\orgmode\\refile.org',
+  org_todo_keywords = {'TODO', 'INPROGRESS','WAITING','|','DONE','CANCELLED'
+  },
+  org_todo_keyword_faces = {
+      TODO = ':foreground red : weight bold',
+      DONE = ':foreground green : slant italic'},
+  org_hide_leading_stars = true,
+  org_archive_location = 'archive.org'})
+EOF
+
+" Nvim-Compe
+set completeopt=menuone,noselect
+
+let g:compe = {}
+let g:compe.enabled = v:true
+let g:compe.autocomplete = v:true
+let g:compe.debug = v:false
+let g:compe.min_length = 1
+let g:compe.preselect = 'enable'
+let g:compe.throttle_time = 80
+let g:compe.source_timeout = 200
+let g:compe.resolve_timeout = 800
+let g:compe.incomplete_delay = 400
+let g:compe.max_abbr_width = 100
+let g:compe.max_kind_width = 100
+let g:compe.max_menu_width = 100
+let g:compe.documentation = v:true
+
+let g:compe.source = {}
+let g:compe.source.path = v:true
+let g:compe.source.buffer = v:true
+let g:compe.source.calc = v:true
+let g:compe.source.nvim_lsp = v:true
+let g:compe.source.nvim_lua = v:true
+let g:compe.source.vsnip = v:true
+let g:compe.source.ultisnips = v:true
+let g:compe.source.luasnip = v:true
+let g:compe.source.emoji = v:true
+
+lua << EOF
+require'compe'.setup({
+  source = {
+    orgmode = true
+  }
+})
+EOF
+
 " ================ Themes ====================================================
 colorscheme gruvbox
 let g:airline_theme = 'wombat'
 highlight Normal guibg=none
 
+command! GruvboxTheme lua require('changetheme').gruvbox_theme()
+command! GithubTheme lua require('changetheme').github_theme()
+
 " ================ Mappings ==================================================
 let mapleader="\<space>"
+" Start a powershell in a split window
+nmap <leader>$ :split term://powershell<CR>
 " Disable Arrow keys in Normal mode
 map <up> <nop>
 map <down> <nop>
 map <left> <nop>
 map <right> <nop>
+"To map <Esc> to exit terminal-mode: >
+tnoremap <Esc> <C-\><C-n>
 " Disable Arrow keys in Insert mode
 imap <up> <nop>
 imap <down> <nop>
@@ -98,9 +160,9 @@ map vv <C-W>v
 map ss <C-W>s
 map Q  <C-W>q
 
-map <S-F1> :Explore<CR> " can probable remove this as dont use Explore
+map <S-F1> :Explore<CR> "can probable remove this as dont use Explore
 nnoremap <Leader>f :NERDTreeToggle<Enter>
-nnoremap <Leader>1 :NERDTreeToggle c:\users\Christophe\Documents\Coding\<Enter>
+nnoremap <Leader>1 :NERDTreeToggle ~/Documents/Coding<Enter>
 
 " buffers
 nnoremap <tab> :bn<CR>
@@ -121,4 +183,4 @@ inoremap <silent><expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
 inoremap <silent><expr><s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
 
 " ================ Local Setup ===============================================
-let g:python3_host_prog = 'C:\\Users\\christophe\\AppData\\Local\\Programs\\Python\\Python39\\python.exe'
+let g:python3_host_prog = '~\\AppData\\Local\\Programs\\Python\\Python39\\python.exe'
