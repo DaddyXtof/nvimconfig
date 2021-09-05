@@ -53,10 +53,11 @@ Plug 'deoplete-plugins/deoplete-jedi'	" Python deoplete plugin
 Plug 'hrsh7th/nvim-compe'
 Plug 'kristijanhusak/orgmode.nvim'
 Plug 'projekt0n/github-nvim-theme'
+Plug 'habamax/vim-godot'
 Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
-" ================ Plugins Specific ==============================================
+" ================ Plugins Specific ===========================================
 " NERDTree stuff
 let NERDTreeQuitOnOpen = 1
 let NERDTreeDirArrows = 0 
@@ -114,6 +115,18 @@ require'compe'.setup({
     orgmode = true
   }
 })
+require'lspconfig'.gdscript.setup{
+  on_attach = function (client)
+    local _notify = client.notify
+    client.notify = function (method, params)
+      if method == 'textDocument/didClose' then
+          -- Godot doesn't implement didClose yet
+          return
+      end
+      _notify(method, params)
+    end
+  end
+}
 EOF
 
 " ================ Themes ====================================================
@@ -159,16 +172,13 @@ nmap <silent> <A-Right> :wincmd l<CR>
 map vv <C-W>v
 map ss <C-W>s
 map Q  <C-W>q
-
 map <S-F1> :Explore<CR> "can probable remove this as dont use Explore
 nnoremap <Leader>f :NERDTreeToggle<Enter>
 nnoremap <Leader>1 :NERDTreeToggle ~/Documents/Coding<Enter>
-
 " buffers
 nnoremap <tab> :bn<CR>
 nnoremap <s-tab> :bp<CR>
 nnoremap <leader>bd :bd<CR>
-
 " Telescope Mappings
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
@@ -183,4 +193,5 @@ inoremap <silent><expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
 inoremap <silent><expr><s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
 
 " ================ Local Setup ===============================================
+let g:godot_executable = 'D:/godot/godot.exe'
 let g:python3_host_prog = '~\\AppData\\Local\\Programs\\Python\\Python39\\python.exe'
