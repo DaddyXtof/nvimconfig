@@ -35,7 +35,7 @@ set noshowmode
 set linespace=0
 set clipboard=unnamedplus
 set cursorline
-
+set mouse=a
 " ================ Plugins ====================================================
 call plug#begin(stdpath('data') . '/plugged')
 " Telescope requirements
@@ -136,7 +136,8 @@ highlight Normal guibg=none
 
 command! GruvboxTheme lua require('changetheme').gruvbox_theme()
 command! GithubTheme lua require('changetheme').github_theme()
-
+command! Atari lua require('changetheme').atari()
+command! Tiny lua require('changetheme').tiny()
 " ================ Mappings ==================================================
 let mapleader="\<space>"
 " Start a powershell in a split window
@@ -184,7 +185,8 @@ nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
-nnoremap <leader>i :e $MYVIMRC<CR>
+nnoremap <leader>i :e $MYVIMRC<cr>
+nnoremap <leader>en <cmd>lua require('my_telescope').edit_neovim()<cr>
 
 " deoplete / using tab for auto complete
 " use tab to forward cycle
