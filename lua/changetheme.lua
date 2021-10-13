@@ -23,4 +23,9 @@ function M.tiny()
     GuiFont Dina:h10
     ]])
 end
+function M.firamono()
+    vim.cmd([[
+    GuiFont Fira Mono:h12
+    ]])
+end
 return M

@@ -39,6 +39,7 @@ set mouse=a
 " ================ Plugins ====================================================
 call plug#begin(stdpath('data') . '/plugged')
 " Telescope requirements
+Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -54,6 +55,7 @@ Plug 'hrsh7th/nvim-compe'
 Plug 'kristijanhusak/orgmode.nvim'
 Plug 'projekt0n/github-nvim-theme'
 Plug 'habamax/vim-godot'
+Plug 'dense-analysis/ale'
 Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
@@ -127,6 +129,7 @@ require'lspconfig'.gdscript.setup{
     end
   end
 }
+require'lspconfig'.clangd.setup{}
 EOF
 
 " ================ Themes ====================================================
@@ -138,6 +141,7 @@ command! GruvboxTheme lua require('changetheme').gruvbox_theme()
 command! GithubTheme lua require('changetheme').github_theme()
 command! Atari lua require('changetheme').atari()
 command! Tiny lua require('changetheme').tiny()
+command! FiraMono lua require('changetheme').firamono()
 " ================ Mappings ==================================================
 let mapleader="\<space>"
 " Start a powershell in a split window
@@ -173,12 +177,12 @@ nmap <silent> <A-Right> :wincmd l<CR>
 map vv <C-W>v
 map ss <C-W>s
 map Q  <C-W>q
-map <S-F1> :Explore<CR> "can probable remove this as dont use Explore
 nnoremap <Leader>f :NERDTreeToggle<Enter>
 nnoremap <Leader>1 :NERDTreeToggle ~/Documents/Coding<Enter>
+nnoremap <Leader>2 <cmd>lua require('telescope.builtin').file_browser()<cr> 
 " buffers
-nnoremap <tab> :bn<CR>
-nnoremap <s-tab> :bp<CR>
+nnoremap <C-tab> :bn<CR>
+nnoremap <C-S-tab> :bp<CR>
 nnoremap <leader>bd :bd<CR>
 " Telescope Mappings
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
@@ -187,7 +191,8 @@ nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>i :e $MYVIMRC<cr>
 nnoremap <leader>en <cmd>lua require('my_telescope').edit_neovim()<cr>
-
+nnoremap <leader>eo <cmd>lua require('my_telescope').edit_orgmode()<cr>
+nnoremap <leader>yy <cmd>lua require('plugin_x1').createFloatingWindow()<cr>
 " deoplete / using tab for auto complete
 " use tab to forward cycle
 inoremap <silent><expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
@@ -196,4 +201,4 @@ inoremap <silent><expr><s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
 
 " ================ Local Setup ===============================================
 let g:godot_executable = 'D:/godot/godot.exe'
-let g:python3_host_prog = '~\\AppData\\Local\\Programs\\Python\\Python39\\python.exe'
+let g:python3_host_prog = '~/AppData/Local/Programs/Python/Python39/python.exe'
