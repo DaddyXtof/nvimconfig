@@ -28,4 +28,15 @@ function M.firamono()
     GuiFont Fira Mono:h12
     ]])
 end
+function M.firacodenf()
+    vim.cmd([[
+    GuiFont! FiraCode NF:h12
+    ]])
+end
+
+function M.terminus()
+    vim.cmd([[
+    GuiFont! Terminus:h14
+    ]])
+end
 return M

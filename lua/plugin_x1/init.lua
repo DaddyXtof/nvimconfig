@@ -8,10 +8,11 @@ local function createFloatingWindow()
 
     local winId = vim.api.nvim_open_win(bufh, true,
       {relative='editor',
-      width=width-4,
-      height=height-4,
-      col=2,
-      row=2})
+      style='minimal',
+      width=width-10,
+      height=height-10,
+      col=5,
+      row=5})
 end
 
 return {

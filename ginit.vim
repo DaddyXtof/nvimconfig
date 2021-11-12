@@ -1,4 +1,4 @@
-" GuiFont! FiraCode NF:h18
+" GuiFont! FiraCode NF:h14
 " GuiFont! Fira Mono:h12
 " GuiFont ProggyCleanTT:h12:cANSI
 " GuiFont Terminus:h14:cANSI
@@ -110,7 +110,7 @@ endfunction
 " Meta Configuration:
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let s:source_pro = 'Source Code Pro'
-let s:fira = 'Fira Mono'
+let s:fira = 'FiraCode NF'
 let g:distribution = 'nvim-qt' 
 let s:terminus = 'Terminus'
 
