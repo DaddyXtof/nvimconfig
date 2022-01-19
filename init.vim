@@ -37,6 +37,9 @@ set linespace=0
 set clipboard=unnamedplus
 set cursorline
 set mouse=a
+" Vive la France:
+set spell
+set spelllang+=fr
 " ================ Plugins ====================================================
 call plug#begin(stdpath('data') . '/plugged')
 " Telescope requirements
@@ -59,11 +62,12 @@ Plug 'hrsh7th/cmp-nvim-lua'
 Plug 'hrsh7th/cmp-nvim-lsp'
 
 Plug 'kristijanhusak/orgmode.nvim'
+Plug 'rmehri01/onenord.nvim', { 'branch': 'main' }
 Plug 'projekt0n/github-nvim-theme'
 Plug 'habamax/vim-godot'
 Plug 'dense-analysis/ale'
 Plug 'ryanoasis/vim-devicons'
-" Plug 'vim-scripts/brainbrain.nvim'                       " My own plugin!
+" Plug 'vim-scripts/brainbrain.nvim'       " My own plugin!
 call plug#end()
 
 " ================ Plugins Specific ===========================================
@@ -174,9 +178,9 @@ require'lspconfig'.jedi_language_server.setup({
 })
 EOF
 " ================ Themes ====================================================
-colorscheme gruvbox
 let g:airline_theme = 'wombat'
 highlight Normal guibg=none
+colorscheme gruvbox
 
 command! GruvboxTheme lua require('changetheme').gruvbox_theme()
 command! GithubTheme lua require('changetheme').github_theme()
@@ -185,6 +189,8 @@ command! Tiny lua require('changetheme').tiny()
 command! FiraMono lua require('changetheme').firamono()
 command! FiraCodeNF lua require('changetheme').firacodenf()
 command! Terminus lua require('changetheme').terminus()
+command! OneNordLight lua require('changetheme').onenordlight()
+command! OneNordDark lua require('changetheme').onenorddark()
 " ================ Mappings ==================================================
 let mapleader="\<space>"
 " Start a powershell in a split window
@@ -221,7 +227,7 @@ map vv <C-W>v
 map ss <C-W>s
 map Q  <C-W>q
 nnoremap <Leader>f :NERDTree<CR>
-nnoremap <Leader>1 :NERDTree C:$HOMEPATH\Documents\Coding<CR>
+nnoremap <Leader>1 :NERDTree C:$HOMEPATH/Documents/Coding<CR>
 nnoremap <Leader>2 :NERDTree C:$HOMEPATH/AppData/Local/nvim<CR>
 nnoremap <Leader>3 :NERDTree C:$HOMEPATH/OneDrive/OrgMode<CR>
 nnoremap <Leader>4 :NERDTree C:$HOMEPATH/AppData/Local/nvim-data<CR>

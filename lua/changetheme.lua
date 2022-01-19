@@ -39,4 +39,15 @@ function M.terminus()
     GuiFont! Terminus:h14
     ]])
 end
+function M.onenorddark()
+    require('onenord').setup({
+        theme="dark"
+    })
+end
+function M.onenordlight()
+    require('onenord').setup({
+        fade_nc = false,
+        theme="light"
+    })
+end
 return M

@@ -259,7 +259,7 @@ ls.snippets = {
 				return "Triggered with " .. snip.trigger .. "."
 			end, {})
 		),
-		-- It's possible to use capture-groups inside regex-triggers.
+		--[[ It's possible to use capture-groups inside regex-triggers.
 		s(
 			{ trig = "b(%d)", regTrig = true },
 			f(function(_, snip)
@@ -272,7 +272,7 @@ ls.snippets = {
 			condition = function(line_to_cursor, matched_trigger, captures)
 				return tonumber(captures[1]) % 2 == 0
 			end,
-		}),
+		}),--]]
 		-- Use a function to execute any shell command and print its text.
 		s("bash", f(bash, {}, "ls")),
 		-- Short version for applying String transformations using function nodes.
@@ -291,10 +291,10 @@ ls.snippets = {
 			-- Lambdas can also apply transforms USING the text of other nodes:
 			l(l._1:gsub("e", l._2), { 1, 2 }),
 		}),
-		s({ trig = "trafo(%d+)", regTrig = true }, {
+		--[[s({ trig = "trafo(%d+)", regTrig = true }, {
 			-- env-variables and captures can also be used:
 			l(l.CAPTURE1:gsub("1", l.TM_FILENAME), {}),
-		}),
+		}),--]]
 		-- Set store_selection_keys = "<Tab>" (for example) in your
 		-- luasnip.config.setup() call to access TM_SELECTED_TEXT. In
 		-- this case, select a URL, hit Tab, then expand this snippet.
