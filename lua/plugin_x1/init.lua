@@ -17,7 +17,7 @@ local function createFloatingWindow()
     local width  = stats.width 
     local height = stats.height
     local bufh = vim.api.nvim_create_buf(false, true) --not listed and scratch buffer
-    local cheat_file = "C:\\Users\\Christophe\\OneDrive\\OrgMode\\cheatsheet.org"
+    local cheat_file = "$HOMEPATH\\OneDrive\\OrgMode\\cheatsheet.org"
     local mytext = lines_from(cheat_file)
     local winId = vim.api.nvim_open_win(bufh, true,
         {relative='editor',
