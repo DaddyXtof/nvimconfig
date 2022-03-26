@@ -156,7 +156,6 @@ local date_input = function(args, state, fmt)
 	local fmt = fmt or "%Y-%m-%d"
 	return sn(nil, i(1, os.date(fmt)))
 end
-
 ls.snippets = {
 	-- When trying to expand a snippet, luasnip first searches the tables for
 	-- each filetype specified in 'filetype' followed by 'all'.
@@ -166,6 +165,12 @@ ls.snippets = {
 	--     - luasnip.all
 	-- are searched in that order.
 	all = {
+	    s("todo", {
+	        c(1, {
+                t("TODO (Christophe): "),
+                t("FIXME(Christophe): "),
+            }),
+        }),
 		-- trigger is fn.
 		s("fn", {
 			-- Simple static text.

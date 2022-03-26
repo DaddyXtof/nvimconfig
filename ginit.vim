@@ -1,4 +1,4 @@
-" GuiFont! FiraCode NF:h14
+" GuiFont! FiraCode NF:h18
 " GuiFont! Fira Mono:h12
 " GuiFont ProggyCleanTT:h12:cANSI
 " GuiFont Terminus:h14:cANSI
@@ -14,20 +14,22 @@ function! MaximizeToggle()
 endfunction
 
 " Old font increase decrease logic
-let s:fontsize = 13
+let s:pattern ='^\([^:]*:[hw]\)\([0-9]\+\(.[0-9]\+\)\?\)$'
+let s:fontsize=str2float(substitute(&guifont, s:pattern, '\2', ''))
 function! AdjustFontSize(amount)
   let s:fontsize = s:fontsize+a:amount
-  :execute "GuiFont! Terminus:h" . s:fontsize
+  let s:fontname = substitute(&guifont, s:pattern, '\1', '')
+  :execute "GuiFont! " .s:fontname .":h" . string(s:fontsize)
 endfunction
 noremap  <C-ScrollWheelUp>   :call AdjustFontSize(1)<CR>
 noremap  <C-ScrollWheelDown> :call AdjustFontSize(-1)<CR>
-inoremap <C-ScrollWheelUp>   <Esc>:call AdjustFontSize(1)<CR>a
+noremap  <C-ScrollWheelUp>   <Esc>:call AdjustFontSize(1)<CR>a
 inoremap <C-ScrollWheelDown> <Esc>:call AdjustFontSize(-1)<CR>a
 
 "Enable context menu
-nnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
+nnoremap <silent><RightMouse>      :call GuiShowContextMenu()<CR>
 inoremap <silent><RightMouse> <Esc>:call GuiShowContextMenu()<CR>
-xnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>gv
+xnoremap <silent><RightMouse>      :call GuiShowContextMenu()<CR>gv
 snoremap <silent><RightMouse> <C-G>:call GuiShowContextMenu()<CR>gv
 
 " Disable GUI Tabline
@@ -116,7 +118,7 @@ let s:terminus = 'Terminus'
 
 let g:fallback_font = [s:source_pro, 12]
 let g:default_font = {
-  \'nvim-qt':  [s:fira, 12],
+  \'nvim-qt':  [s:fira, 18],
 \ }
 let g:font_manipulation = {
   \'nvim-qt':  [function('s:nvim_qt_get_font'), function('s:nvim_qt_set_font')],

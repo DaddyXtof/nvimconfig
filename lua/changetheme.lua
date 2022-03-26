@@ -1,3 +1,4 @@
+-- I can call the functions below from init.lua
 local M = {}
 function M.github_theme()
     require("github-theme").setup({

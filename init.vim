@@ -21,7 +21,7 @@ set scrolloff=8
 set incsearch
 set undofile
 set signcolumn=yes
-set colorcolumn=80
+"set colorcolumn=80
 set encoding=UTF-8
 set showtabline=2  " Only want tab if 2 tabs are open
 set splitbelow
@@ -34,17 +34,17 @@ set listchars=tab:→\ ,eol:↲,nbsp:␣,trail:•,extends:⟩,precedes:⟨
 set nofoldenable    " disable folding because why?...
 set noshowmode
 set linespace=0
+set linebreak
 set clipboard=unnamedplus
 set cursorline
 set mouse=a
 " Vive la France:
-set spell
+set nospell
 set spelllang+=fr
 " ================ Plugins ====================================================
 call plug#begin(stdpath('data') . '/plugged')
 " Telescope requirements
 Plug 'nvim-treesitter/nvim-treesitter'
-Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'preservim/nerdtree'
@@ -65,8 +65,8 @@ Plug 'kristijanhusak/orgmode.nvim'
 Plug 'rmehri01/onenord.nvim', { 'branch': 'main' }
 Plug 'projekt0n/github-nvim-theme'
 Plug 'habamax/vim-godot'
-Plug 'dense-analysis/ale'
 Plug 'ryanoasis/vim-devicons'
+Plug 'kyazdani42/nvim-web-devicons'
 " Plug 'vim-scripts/brainbrain.nvim'       " My own plugin!
 call plug#end()
 
@@ -76,17 +76,9 @@ let g:NERDTreeQuitOnOpen = 1
 let g:NERDTreeDirArrows = 0 
 let g:NERDTreeChDirMode=3
 
-" OrgMode
 lua << EOF
-local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
-parser_config.org = {
-  install_info = {
-    url = 'https://github.com/milisims/tree-sitter-org',
-    revision = 'main',
-    files = {'src/parser.c', 'src/scanner.cc'},
-  },
-  filetype = 'org',
-}
+-- Load custom tree-sitter grammar for org filetype
+require('orgmode').setup_ts_grammar()
 
 require'nvim-treesitter.configs'.setup {
   -- If TS highlights are not enabled at all, or disabled via `disable` prop, highlighting will fallback to default Vim syntax highlighting
@@ -114,6 +106,7 @@ set completeopt=menu,menuone,noselect
 lua <<EOF
   -- Setup my luasnip stuff
   require('snippets')
+  ls = require('luasnip')
   -- Setup nvim-cmp.
   local cmp = require'cmp'
   cmp.setup({
@@ -124,11 +117,26 @@ lua <<EOF
       end,
     },
     mapping = {
-      ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-d>']     = cmp.mapping.scroll_docs(-4),
+      ['<C-f>']     = cmp.mapping.scroll_docs(4),
       ['<C-Space>'] = cmp.mapping.complete(),
-      ['<C-e>'] = cmp.mapping.close(),
-      ['<CR>'] = cmp.mapping.confirm({ select = true }),
+      ['<C-e>']     = cmp.mapping.close(),
+      ['<CR>']      = cmp.mapping.confirm({ select = true }),
+      ['<C-k>']     = cmp.mapping(function(fallback)
+                    if ls.expand_or_jumpable() then
+                        ls.expand_or_jump()
+                    end
+                    end, {"i", "s"}),
+      ['<C-j>']     = cmp.mapping(function(fallback)
+                    if ls.jumpable(-1) then
+                        ls.jump(-1)
+                    end
+                    end, {"i", "s"}),
+      ['<C-l>']     = cmp.mapping(function(fallback)
+                    if ls.choice_active() then
+                        ls.change_choice(1)
+                    end
+                    end, {"i", "s"}),
     },
     sources = {
       { name = 'orgmode' },
@@ -141,24 +149,14 @@ lua <<EOF
       },
     experimental = {
         native_menu = false,
-        ghost_text = true,
+        ghost_text = true
         }
   })
-
--- Setup lspconfig.
---  require('lspconfig')[%YOUR_LSP_SERVER%].setup {
---    capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
---  }
 EOF
 
 lua << EOF
-require'cmp'.setup({
-  source = {
-    orgmode = true
-  }
-})
 require'lspconfig'.gdscript.setup({
-  on_attach = function (client)
+  on_attach = function (client) --On Attach run the function client
     local _notify = client.notify
     client.notify = function (method, params)
       if method == 'textDocument/didClose' then
@@ -176,11 +174,58 @@ require'lspconfig'.clangd.setup({
 require'lspconfig'.jedi_language_server.setup({
   capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 })
+
+require'nvim-web-devicons'.setup({
+ -- your personnal icons can go here (to override)
+ -- you can specify color or cterm_color instead of specifying both of them
+ -- DevIcon will be appended to `name`
+ override = {
+  zsh = {
+    icon = "",
+    color = "#428850",
+    cterm_color = "65",
+    name = "Zsh"
+  }
+ };
+ -- globally enable default icons (default to false)
+ -- will get overriden by `get_icons` option
+ default = true;
+})
+require('telescope').setup({
+  defaults = {
+    -- Default configuration for telescope goes here:
+    -- config_key = value,
+    mappings = {
+      i = {
+        -- map actions.which_key to <C-h> (default: <C-/>)
+        -- actions.which_key shows the mappings for your picker,
+        -- e.g. git_{create, delete, ...}_branch for the git_branches picker
+        ["<C-h>"] = "which_key"
+      }
+    }
+  },
+  pickers = {
+    -- Default configuration for builtin pickers goes here:
+    -- picker_name = {
+    --   picker_config_key = value,
+    --   ...
+    -- }
+    -- Now the picker_config_key will be applied every time you call this
+    -- builtin picker
+  },
+  extensions = {
+    -- Your extension configuration goes here:
+    -- extension_name = {
+    --   extension_config_key = value,
+    -- }
+    -- please take a look at the readme of the extension you want to configure
+  }
+})
 EOF
 " ================ Themes ====================================================
-let g:airline_theme = 'wombat'
-highlight Normal guibg=none
 colorscheme gruvbox
+let g:airline_theme = 'molokai'
+highlight Normal guibg=none
 
 command! GruvboxTheme lua require('changetheme').gruvbox_theme()
 command! GithubTheme lua require('changetheme').github_theme()
@@ -212,50 +257,57 @@ nmap j gj
 nmap k gk
 vmap j gj
 vmap k gk
-" Quick jumping between splits
+" Quick jumping between windows splits
 map <C-J> <C-W>j
 map <C-K> <C-W>k
 map <C-H> <C-W>h
 map <C-L> <C-W>l
 " And this as well
-nmap <silent> <A-Up> :wincmd k<CR>
+nmap <silent> <A-Up>   :wincmd k<CR>
 nmap <silent> <A-Down> :wincmd j<CR>
 nmap <silent> <A-Left> :wincmd h<CR>
-nmap <silent> <A-Right> :wincmd l<CR>
+nmap <silent> <A-Right>:wincmd l<CR>
 " Open new splits easily
 map vv <C-W>v
 map ss <C-W>s
 map Q  <C-W>q
+nnoremap <C-s> :w<CR>
+inoremap <C-s> <ESC>:w<CR>i
 nnoremap <Leader>f :NERDTree<CR>
 nnoremap <Leader>1 :NERDTree C:$HOMEPATH/Documents/Coding<CR>
 nnoremap <Leader>2 :NERDTree C:$HOMEPATH/AppData/Local/nvim<CR>
 nnoremap <Leader>3 :NERDTree C:$HOMEPATH/OneDrive/OrgMode<CR>
 nnoremap <Leader>4 :NERDTree C:$HOMEPATH/AppData/Local/nvim-data<CR>
-nnoremap <Leader>5 <cmd>lua require('telescope.builtin').file_browser()<cr> 
 " buffers
-nnoremap <C-tab> :bn<CR>
+nnoremap <C-tab>   :bn<CR>
 nnoremap <C-S-tab> :bp<CR>
-nnoremap <leader>bd :bd<CR>
 " Telescope Mappings
+nnoremap <leader>5 <cmd>lua require('telescope.builtin').find_files()<cr>
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>gs <cmd>lua require('telescope.builtin').grep_string()<cr>
+nnoremap <leader>cs <cmd>lua require('telescope.builtin').colorscheme()<cr>
+nnoremap <leader>co <cmd>lua require('telescope.builtin').commands()<cr>
+nnoremap <leader>qf <cmd>lua require('telescope.builtin').quickfix()<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
-nnoremap <leader>i :e $MYVIMRC<cr>
+nnoremap <leader>ii :e $MYVIMRC<cr>
 nnoremap <leader>en <cmd>lua require('my_telescope').edit_neovim()<cr>
 nnoremap <leader>eo <cmd>lua require('my_telescope').edit_orgmode()<cr>
+nnoremap <leader>ec <cmd>lua require('my_telescope').edit_coding()<cr>
+nnoremap <leader>ee <cmd>lua vim.diagnostic.open_float()<cr>
 nnoremap <leader>yy <cmd>lua require('plugin_x1').createFloatingWindow()<cr>
 " deoplete / using tab for auto complete
 " use tab to forward cycle
 " inoremap <silent><expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
 " inoremap <silent><expr><s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
 " lsp mapping
-nnoremap <leader>vd :lua vim.lsp.buf.definition()<CR>
-nnoremap <leader>vi :lua vim.lsp.buf.implementation()<CR>
+nnoremap <leader>vd  :lua vim.lsp.buf.definition()<CR>
+nnoremap <leader>vi  :lua vim.lsp.buf.implementation()<CR>
 nnoremap <leader>vsh :lua vim.lsp.buf.signature_help()<CR>
 nnoremap <leader>vrr :lua vim.lsp.buf.references()<CR>
 nnoremap <leader>vrn :lua vim.lsp.buf.rename()<CR>
-nnoremap <leader>vh :lua vim.lsp.buf.hover()<CR>
+nnoremap <leader>vh  :lua vim.lsp.buf.hover()<CR>
 nnoremap <leader>vca :lua vim.lsp.buf.code_action()<CR>
 " ================ Local Setup ===============================================
 let g:godot_executable = 'D:/godot/godot.exe'

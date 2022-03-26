@@ -9,4 +9,9 @@ function M.edit_orgmode()
     cwd= "~/OneDrive/OrgMode"
     }
 end
+function M.edit_coding()
+    require('telescope.builtin').live_grep {
+    cwd= "~/Documents/Coding"
+    }
+end
 return M
