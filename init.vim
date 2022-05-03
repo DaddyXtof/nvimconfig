@@ -26,7 +26,7 @@ set encoding=UTF-8
 set showtabline=2  " Only want tab if 2 tabs are open
 set splitbelow
 set splitright
-set laststatus=2
+set laststatus=3   " Global Status line
 set autochdir
 set list
 "set listchars=tab:\¦\, eol:\↵\
@@ -44,6 +44,7 @@ set spelllang+=fr
 " ================ Plugins ====================================================
 call plug#begin(stdpath('data') . '/plugged')
 " Telescope requirements
+Plug 'sudormrfbin/cheatsheet.nvim'
 Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -52,6 +53,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'gruvbox-community/gruvbox'
 Plug 'neovim/nvim-lspconfig'			" Neovim Language Server
+Plug 'dbeniamine/cheat.sh-vim'
 
 Plug 'L3MON4D3/luasnip'
 Plug 'saadparwaiz1/cmp_luasnip'
@@ -116,11 +118,15 @@ lua <<EOF
         require('luasnip').lsp_expand(args.body)
       end,
     },
-    mapping = {
-      ['<C-d>']     = cmp.mapping.scroll_docs(-4),
+    window = {
+      completion = cmp.config.window.bordered(),
+      documentation = cmp.config.window.bordered(),
+    },
+    mapping = cmp.mapping.preset.insert({
+      ['<C-b>']     = cmp.mapping.scroll_docs(-4),
       ['<C-f>']     = cmp.mapping.scroll_docs(4),
       ['<C-Space>'] = cmp.mapping.complete(),
-      ['<C-e>']     = cmp.mapping.close(),
+      ['<C-e>']     = cmp.mapping.abort(),
       ['<CR>']      = cmp.mapping.confirm({ select = true }),
       ['<C-k>']     = cmp.mapping(function(fallback)
                     if ls.expand_or_jumpable() then
@@ -137,20 +143,79 @@ lua <<EOF
                         ls.change_choice(1)
                     end
                     end, {"i", "s"}),
-    },
-    sources = {
-      { name = 'orgmode' },
-      { name = 'nvim_lua' },
+    }),
+    sources = cmp.config.sources({
       { name = 'nvim_lsp' },
-      { name = 'path' },
-      -- For luasnip user.
       { name = 'luasnip' },
       { name = 'buffer' },
-      },
+      { name = 'orgmode' },
+      { name = 'nvim_lua' },
+      { name = 'path' },
+    }),
+    formatting = {
+        format = function(entry, vim_item)
+          -- Kind icons
+            local kind_icons = {
+              Text = "",
+              Method = "",
+              Function = "",
+              Constructor = "",
+              Field = "",
+              Variable = "",
+              Class = "ﴯ",
+              Interface = "",
+              Module = "",
+              Property = "ﰠ",
+              Unit = "",
+              Value = "",
+              Enum = "",
+              Keyword = "",
+              Snippet = "",
+              Color = "",
+              File = "",
+              Reference = "",
+              Folder = "",
+              EnumMember = "",
+              Constant = "",
+              Struct = "",
+              Event = "",
+              Operator = "",
+              TypeParameter = ""
+            }
+          vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind) -- This concatonates the icons with the name of the item kind
+          -- Source
+          vim_item.menu = ({
+            buffer   = "[Buffer]",
+            nvim_lsp = "[LSP]",
+            luasnip  = "[LuaSnip]",
+            nvim_lua = "[Lua]",
+            orgmode  = "[OrgMode]",
+            path     = "[Path]",
+          })[entry.source.name]
+          return vim_item
+        end
+    },
     experimental = {
         native_menu = false,
         ghost_text = true
         }
+  })
+  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline('/', {
+     mapping = cmp.mapping.preset.cmdline(),
+     sources = {
+       { name = 'buffer' }
+     }
+  })
+
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
   })
 EOF
 
@@ -168,12 +233,12 @@ require'lspconfig'.gdscript.setup({
   end,
   capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 })
-require'lspconfig'.clangd.setup({
-  capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-})
-require'lspconfig'.jedi_language_server.setup({
-  capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-})
+require'lspconfig'.clangd.setup{
+  capabilities = capabilities
+}
+require'lspconfig'.jedi_language_server.setup{
+  capabilities = capabilites
+}
 
 require'nvim-web-devicons'.setup({
  -- your personnal icons can go here (to override)
@@ -226,6 +291,7 @@ EOF
 colorscheme gruvbox
 let g:airline_theme = 'molokai'
 highlight Normal guibg=none
+highlight WinSeparator guibg=none " For clean separation on windows
 
 command! GruvboxTheme lua require('changetheme').gruvbox_theme()
 command! GithubTheme lua require('changetheme').github_theme()

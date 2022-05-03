@@ -1,0 +1,35 @@
+# Xtof Cheatsheet
+
+## xtof-nvim-cheats
+Search NeoVim folder in Telescope | <leader>en
+Diagnostics in floating window | <leader>ee
+Search OrgMode folder in Telescope | <leader>eo
+View Signature | <leader>vsh
+View Definition | <leader>vd
+View Implementation | <leader>vi
+View References | <leader>vrr
+View Rename | <leader>vrn
+View Hover | <leader>vh
+View Code Action | <leader>vca
+View ColorSchemes | <leader>cs
+Grep String under cursor | <leader>gs
+View Commands | <leader>co
+View Quick Fix  | <leader>qf
+Move {n} lines | {n}j
+Delete everything inside { | di{
+Select everything inside { | vi{
+Select everything inside { including {| va{
+Align everything inside { | =i{
+Go to character i | fi
+Replace "foo" with "bar" everywhere w. confirmation | :%s/foo/bar/gc
+Paste into command line | :ctrl-r "
+Check spelling current word | z=
+Comment lines    | <C-v>block mode,select lines,<S-i> enter comment sign,<ESC>
+Uncomment lines  | <C-v>block mode,select comment signs,x
+Change variables | gd (or gD), c (change) + gn (search forward) new_name ESC, . (repeat)
+
+## xtof-c-stuff:
+String definition | char str[] = "My string";
+
+## xtof-python-stuff
+List comprehension | doubled_odds = [n * 2 for n in numbers if n % 2 == 1] 
